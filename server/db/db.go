@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 )
 
@@ -21,7 +20,7 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Succesfully connected to Sqlite")
+	log.Println("Succesfully connected to Sqlite")
 }
 
 func CreateDB() {
