@@ -1,4 +1,4 @@
 # Devlinks
 
 - Backend: Go
-- Frontend: TBD
+- Frontend: Vue.js, TypeScript, Pinia
