@@ -26,4 +26,4 @@ go.work.sum
 
 # Database
 *.sqlite
-/uploads
+uploads/
