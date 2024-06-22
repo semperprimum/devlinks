@@ -26,6 +26,11 @@ export default {
     fontFamily: {
       sans: ["Instrument Sans Variable", "sans-serif"],
     },
+    extend: {
+      boxShadow: {
+        inputShadow: "0 0 32px 0 #633cff40",
+      },
+    },
   },
   plugins: [],
 };
