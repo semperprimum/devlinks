@@ -29,7 +29,8 @@ func CreateDB() {
 		email VARCHAR(100) UNIQUE NOT NULL,
 		first_name VARCHAR(100),
 		last_name VARCHAR(100),
-		password VARCHAR(100) NOT NULL
+		password VARCHAR(100) NOT NULL,
+		pic_path VARCHAR(100)
 	)`)
 
 	DB.Exec(`CREATE TABLE IF NOT EXISTS links (

@@ -33,8 +33,9 @@ func main() {
 	authRouter.HandleFunc("POST /user/link", handlers.AddLink)
 	authRouter.HandleFunc("PUT /user/link", handlers.UpdateLinksOrder)
 	authRouter.HandleFunc("DELETE /user/link/{id}", handlers.DeleteLink)
+	authRouter.HandleFunc("POST /user/upload", handlers.UploadPicture)
 
-	router.Handle("/user", middleware.Auth(authRouter))
+	router.Handle("/", middleware.Auth(authRouter))
 
 	server := http.Server{
 		Addr:    ":8080",

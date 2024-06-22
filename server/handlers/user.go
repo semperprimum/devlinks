@@ -25,6 +25,7 @@ type GetUserResponse struct {
 	Email     string         `json:"email"`
 	FirstName sql.NullString `json:"first_name"`
 	LastName  sql.NullString `json:"last_name"`
+	PicPath   sql.NullString `json:"pic_path"`
 }
 
 type LoginData struct {
@@ -83,7 +84,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	userId := middleware.GetUser(r)
 
 	var user GetUserResponse
-	err := db.DB.QueryRow("SELECT id, first_name, last_name, email FROM users WHERE id = $1", userId).Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email)
+	err := db.DB.QueryRow("SELECT id, first_name, last_name, email, pic_path FROM users WHERE id = $1", userId).Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PicPath)
 	if err != nil {
 		utils.WriteJSONError(w, err.Error(), http.StatusInternalServerError)
 		return
