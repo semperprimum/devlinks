@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { Component } from "vue";
 
+const emit = defineEmits(["update:modelValue"]);
+
 defineProps<{
   placeholder?: string;
   leading?: Component;
+  modelValue?: string;
 }>();
 </script>
 
@@ -13,9 +16,15 @@ defineProps<{
   >
     <component v-if="leading" :is="leading" />
     <input
-      class="w-full h-full py-3 outline-none"
+      class="w-full h-full py-3 outline-none caret-brand-300"
       type="text"
       v-bind="{ placeholder }"
+      :value="modelValue"
+      @input="
+        (event: Event) => {
+          emit('update:modelValue', (event.target as HTMLInputElement).value);
+        }
+      "
     />
   </div>
 </template>

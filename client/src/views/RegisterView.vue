@@ -5,7 +5,45 @@ import Lock from "@/components/icons/Lock.vue";
 import LogoFull from "@/components/icons/LogoFull.vue";
 import Label from "@/components/Label.vue";
 import Button from "@/components/Button.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import * as yup from "yup";
+import { useForm } from "vee-validate";
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+interface FormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+const validationSchema = yup.object({
+  email: yup.string().email("Must be a valid Email").required("Can't be empty"),
+  password: yup
+    .string()
+    .min(8, "Please check again")
+    .required("Can't be empty"),
+  confirmPassword: yup
+    .string()
+    .required("Can't be empty")
+    .oneOf([yup.ref("password")], "Please check again"),
+});
+
+const { defineField, handleSubmit, errors } = useForm<FormData>({
+  validationSchema,
+});
+
+const [email] = defineField("email");
+const [password] = defineField("password");
+const [confirmPassword] = defineField("confirmPassword");
+
+const onSubmit = handleSubmit(async (values) => {
+  await authStore.register(values.email, values.password);
+
+  router.replace("/login");
+});
 </script>
 
 <template>
@@ -23,32 +61,40 @@ import { RouterLink } from "vue-router";
           Let’s get you started sharing your links!
         </p>
 
-        <Label text="Email address" />
-        <Input
-          class="mb-6 mt-1"
-          placeholder="e.g. alex@email.com"
-          :leading="Envelope"
-        />
+        <form @submit.prevent="onSubmit">
+          <Label text="Email address" />
+          <Input
+            v-model="email"
+            class="mb-6 mt-1"
+            placeholder="e.g. alex@email.com"
+            :leading="Envelope"
+          />
 
-        <Label text="Create password" />
-        <Input
-          class="mt-1 mb-6"
-          placeholder="At least .8 characters"
-          :leading="Lock"
-        />
+          <Label text="Create password" />
+          <Input
+            v-model="password"
+            class="mt-1 mb-6"
+            placeholder="At least .8 characters"
+            :leading="Lock"
+          />
 
-        <Label text="Confirm password" />
-        <Input
-          class="mt-1"
-          placeholder="At least .8 characters"
-          :leading="Lock"
-        />
+          <Label text="Confirm password" />
+          <Input
+            v-model="confirmPassword"
+            class="mt-1"
+            placeholder="At least .8 characters"
+            :leading="Lock"
+          />
 
-        <p class="text-neutral-400 text-xs mt-6">
-          Password must contain at least 8 characters
-        </p>
+          <p class="text-neutral-400 text-xs mt-6">
+            Password must contain at least 8 characters
+          </p>
 
-        <Button class="w-full mt-6">Login</Button>
+          <Button class="w-full mt-6">Register</Button>
+          <code>
+            {{ errors }}
+          </code>
+        </form>
 
         <p class="text-neutral-400 w-full text-center mt-6">
           Already have an account?
