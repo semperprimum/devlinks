@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/cors"
 	"github.com/semperprimum/devlinks/server/db"
 	"github.com/semperprimum/devlinks/server/handlers"
 	"github.com/semperprimum/devlinks/server/middleware"
@@ -36,26 +36,18 @@ func main() {
 	authRouter.HandleFunc("POST /user/upload", handlers.UploadPicture)
 
 	router.Handle("/", middleware.Auth(authRouter))
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}).Handler(router)
 
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: middleware.Logging(router),
+		Handler: middleware.Logging(corsHandler),
 	}
 
-	fmt.Println(`
-|\   ____\|\   __  \         
-\ \  \___|\ \  \|\  \        
- \ \  \  __\ \  \\\  \       
-  \ \  \|\  \ \  \\\  \      
-   \ \_______\ \_______\     
-    \|_______|\|_______|     
- ________  ________  ___     
-|\   __  \|\   __  \|\  \    
-\ \  \|\  \ \  \|\  \ \  \   
- \ \   __  \ \   ____\ \  \  
-  \ \  \ \  \ \  \___|\ \  \ 
-   \ \__\ \__\ \__\    \ \__\
-    \|__|\|__|\|__|     \|__|`)
 	log.Println("Starting server on port 8080")
 	server.ListenAndServe()
 }
