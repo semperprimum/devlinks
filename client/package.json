@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@floating-ui/vue": "^1.0.7",
     "@fontsource-variable/instrument-sans": "^5.0.5",
     "@vueuse/core": "^10.11.0",
     "@vueuse/integrations": "^10.11.0",

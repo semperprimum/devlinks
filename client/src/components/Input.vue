@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
   <div
-    class="flex items-center gap-3 px-4 bg-neutral-100 outline outline-1 outline-neutral-300 rounded-lg focus-within:outline focus-within:outline-1 focus-within:outline-brand-300 focus-within:shadow-inputShadow"
+    class="flex items-center gap-3 px-4 bg-neutral-100 outline outline-1 outline-neutral-300 rounded-lg focus-within:outline focus-within:outline-1 focus-within:outline-brand-300 focus-within:shadow-inputShadow transition-shadow"
   >
     <component v-if="leading" :is="leading" />
     <input

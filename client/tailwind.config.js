@@ -29,6 +29,7 @@ export default {
     extend: {
       boxShadow: {
         inputShadow: "0 0 32px 0 #633cff40",
+        dropdownShadow: "0 0 32px #0000001a",
       },
     },
   },

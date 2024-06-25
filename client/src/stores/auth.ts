@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 import { ref, type Ref } from "vue";
 
@@ -9,6 +9,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.getItem("auth-token") || null,
   );
   const isLoading: Ref<boolean> = ref(false);
+  const headers = { Authorization: `Bearer ${token.value}` };
 
   const setToken = (newToken: string | null) => {
     if (newToken) {
@@ -50,9 +51,42 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const getUserInfo = async (): Promise<AxiosResponse<any, any> | null> => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user`, { headers });
+      return response;
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        console.log(
+          "getUserInfo error response status:",
+          error.response.status,
+        );
+      } else {
+        console.log("getUserInfo error:", error.message);
+      }
+      return null;
+    }
+  };
+
+  const checkAuth = async (): Promise<boolean> => {
+    if (!token.value) {
+      console.log("No token found");
+      return false;
+    }
+
+    const response = await getUserInfo();
+
+    if (!response || response.status !== 200) {
+      logout();
+      return false;
+    }
+
+    return true;
+  };
+
   const logout = () => {
     setToken(null);
   };
 
-  return { token, isLoading, login, logout, register };
+  return { token, isLoading, login, logout, register, getUserInfo, checkAuth };
 });
