@@ -2,8 +2,10 @@
 import { RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "./stores/auth";
 import { onMounted } from "vue";
+import { useProfileStore } from "./stores/profile";
 
 const authStore = useAuthStore();
+const profileStore = useProfileStore();
 const router = useRouter();
 
 onMounted(async () => {
@@ -11,6 +13,9 @@ onMounted(async () => {
   if (!isAuthValid) {
     router.replace("/login");
   }
+
+  await profileStore.getUserInfo();
+  await profileStore.getUserLinks();
 });
 </script>
 

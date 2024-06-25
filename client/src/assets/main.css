@@ -6,3 +6,9 @@ body {
     @apply bg-neutral-200 text-neutral-500;
     line-height: 1.5 !important;
 }
+
+html,
+body,
+#app {
+    @apply min-h-screen;
+}
