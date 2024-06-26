@@ -25,7 +25,14 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, fmt.Sprintf("Unable to get file: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	defer file.Close()
+
+	fileType := handler.Header.Get("Content-Type")
+	if fileType != "image/jpeg" && fileType != "image/png" {
+		utils.WriteJSONError(w, "Invalid file type. Only JPG and PNG are allowed.", http.StatusBadRequest)
+		return
+	}
 
 	userID := middleware.GetUser(r)
 

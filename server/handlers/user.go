@@ -51,9 +51,9 @@ type CreateUserResponse struct {
 }
 
 type UpdateUserInfoData struct {
-	Email     string `json:"email,omitempty" validate:"omitempty,email"`
-	FirstName string `json:"first_name,omitempty" validate:"omitempty"`
-	LastName  string `json:"last_name,omitempty" validate:"omitempty"`
+	DisplayEmail string `json:"display_email,omitempty" validate:"omitempty,email"`
+	FirstName    string `json:"first_name,omitempty" validate:"omitempty"`
+	LastName     string `json:"last_name,omitempty" validate:"omitempty"`
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -208,18 +208,10 @@ func UpdateUserInfo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if data.Email != "" {
-		var emailCheck string
-		_ = db.DB.QueryRow("SELECT id FROM users WHERE email = $1", data.Email).Scan(&emailCheck)
-
-		if emailCheck != "" && emailCheck != userID {
-			utils.WriteJSONError(w, "Email already exists", http.StatusBadRequest)
-			return
-		}
-
-		_, err = db.DB.Exec("UPDATE users SET email = $1 WHERE id = $2", data.Email, userID)
+	if data.DisplayEmail != "" {
+		_, err = db.DB.Exec("UPDATE users SET display_email = $1 WHERE id = $2", data.DisplayEmail, userID)
 		if err != nil {
-			utils.WriteJSONError(w, "Failed updating email field", http.StatusInternalServerError)
+			utils.WriteJSONError(w, "Failed updating display_email field", http.StatusInternalServerError)
 			return
 		}
 	}
