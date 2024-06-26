@@ -32,6 +32,19 @@ type AddLinkResponse struct {
 	ID int `json:"id"`
 }
 
+type UserInfo struct {
+	ID           int            `json:"id"`
+	DisplayEmail sql.NullString `json:"display_email"`
+	FirstName    sql.NullString `json:"first_name"`
+	LastName     sql.NullString `json:"last_name"`
+	PicPath      sql.NullString `json:"pic_path"`
+}
+
+type GetUserLinksResponse struct {
+	Links []models.Link `json:"links"`
+	User  UserInfo      `json:"user"`
+}
+
 func GetUserLinks(w http.ResponseWriter, r *http.Request) {
 	userId := r.PathValue("id")
 
@@ -53,8 +66,16 @@ func GetUserLinks(w http.ResponseWriter, r *http.Request) {
 		links = append(links, link)
 	}
 
+	var user UserInfo
+	err = db.DB.QueryRow("SELECT id, first_name, last_name, display_email, pic_path FROM users WHERE id = $1", userId).Scan(&user.ID, &user.FirstName, &user.LastName, &user.DisplayEmail, &user.PicPath)
+
+	var res = GetUserLinksResponse{
+		Links: links,
+		User:  user,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(links)
+	json.NewEncoder(w).Encode(res)
 }
 
 func AddLink(w http.ResponseWriter, r *http.Request) {

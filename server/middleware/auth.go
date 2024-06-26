@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/semperprimum/devlinks/server/models"
+	"github.com/semperprimum/devlinks/server/utils"
 )
 
 type wrappedRequest struct {
@@ -30,14 +31,14 @@ func Auth(next http.Handler) http.Handler {
 		// Get the token from the Authorization header
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			http.Error(w, "Authorization header is required", http.StatusUnauthorized)
+			utils.WriteJSONError(w, "Authorization header it required", http.StatusBadRequest)
 			return
 		}
 
 		// The token usually comes in the format "Bearer <token>"
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+			utils.WriteJSONError(w, "Invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
 
@@ -53,7 +54,7 @@ func Auth(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			utils.WriteJSONError(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 
@@ -62,7 +63,7 @@ func Auth(next http.Handler) http.Handler {
 			// Retrieve the user ID from the token claims
 			userID, ok := claims["id"].(string)
 			if !ok {
-				http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+				utils.WriteJSONError(w, "Invalid token claims", http.StatusUnauthorized)
 				return
 			}
 
@@ -70,7 +71,7 @@ func Auth(next http.Handler) http.Handler {
 			ctx := context.WithValue(r.Context(), UserIDKey, userID)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			utils.WriteJSONError(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 	})
