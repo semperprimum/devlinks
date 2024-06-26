@@ -1,9 +1,27 @@
 <script setup lang="ts">
 import { useProfileStore } from "@/stores/profile";
+import PlatformLink from "@/components/PlatformLink.vue";
+import { computed } from "vue";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const profileStore = useProfileStore();
-// TODO: Fille the phone with links
+
+const links = computed(() => profileStore?.links?.links.slice(0, 5));
+
+const filler = computed(() => {
+  const f: [][] = [];
+
+  if (links.value && links.value.length < 5) {
+    for (let i = 0; i < 5 - links.value.length; i++) {
+      f.push([]);
+    }
+  }
+
+  console.log(links.value?.length);
+  console.log(f);
+
+  return f;
+});
 </script>
 
 <template>
@@ -41,8 +59,8 @@ const profileStore = useProfileStore();
 
       <span
         class="block text-center text-neutral-400 mt-2 text-sm"
-        v-if="profileStore.profile?.email"
-        >{{ profileStore.profile?.email }}</span
+        v-if="profileStore.profile?.display_email.Valid"
+        >{{ profileStore.profile.display_email.String }}</span
       >
       <div
         v-else
@@ -51,11 +69,15 @@ const profileStore = useProfileStore();
     </div>
 
     <div class="grid gap-5 mt-auto">
-      <div class="w-full h-11 bg-neutral-250 rounded-lg"></div>
-      <div class="w-full h-11 bg-neutral-250 rounded-lg"></div>
-      <div class="w-full h-11 bg-neutral-250 rounded-lg"></div>
-      <div class="w-full h-11 bg-neutral-250 rounded-lg"></div>
-      <div class="w-full h-11 bg-neutral-250 rounded-lg"></div>
+      <PlatformLink
+        v-for="link in links"
+        :platform="link.platform"
+        :link="link.url"
+      />
+      <div
+        v-for="fill in filler"
+        class="w-full h-11 bg-neutral-250 rounded-lg"
+      ></div>
     </div>
   </div>
 </template>

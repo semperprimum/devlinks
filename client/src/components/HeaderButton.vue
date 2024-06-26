@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Component, DefineComponent } from "vue";
+import type { Component } from "vue";
 import { RouterLink } from "vue-router";
 
 defineProps<{

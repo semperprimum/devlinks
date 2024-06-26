@@ -7,6 +7,7 @@ defineProps<{
   placeholder?: string;
   leading?: Component;
   modelValue?: string;
+  type?: "text" | "password";
 }>();
 </script>
 
@@ -17,7 +18,7 @@ defineProps<{
     <component v-if="leading" :is="leading" />
     <input
       class="w-full h-full py-3 outline-none caret-brand-300"
-      type="text"
+      :type="type || 'text'"
       v-bind="{ placeholder }"
       :value="modelValue"
       @input="

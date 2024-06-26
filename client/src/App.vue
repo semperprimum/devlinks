@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { RouterView, useRouter } from "vue-router";
-import { useAuthStore } from "./stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { onMounted } from "vue";
-import { useProfileStore } from "./stores/profile";
+import { useProfileStore } from "@/stores/profile";
 
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
@@ -14,8 +14,10 @@ onMounted(async () => {
     router.replace("/login");
   }
 
-  await profileStore.getUserInfo();
-  await profileStore.getUserLinks();
+  if (authStore.token) {
+    await profileStore.getUserInfo();
+    await profileStore.getUserLinks();
+  }
 });
 </script>
 

@@ -73,6 +73,7 @@ const onSubmit = handleSubmit(async (values) => {
           <Label text="Create password" />
           <Input
             v-model="password"
+            type="password"
             class="mt-1 mb-6"
             placeholder="At least .8 characters"
             :leading="Lock"
@@ -81,6 +82,7 @@ const onSubmit = handleSubmit(async (values) => {
           <Label text="Confirm password" />
           <Input
             v-model="confirmPassword"
+            type="password"
             class="mt-1"
             placeholder="At least .8 characters"
             :leading="Lock"

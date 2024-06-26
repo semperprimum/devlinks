@@ -67,6 +67,7 @@ const onSubmit = handleSubmit(async (values) => {
           <Label text="Password" />
           <Input
             v-model="password"
+            type="password"
             class="mt-1"
             placeholder="Enter your password"
             :leading="Lock"

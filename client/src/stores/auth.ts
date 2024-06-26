@@ -1,6 +1,6 @@
 import axios, { type AxiosResponse } from "axios";
 import { defineStore } from "pinia";
-import { ref, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref } from "vue";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,7 +9,9 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.getItem("auth-token") || null,
   );
   const isLoading: Ref<boolean> = ref(false);
-  const headers = { Authorization: `Bearer ${token.value}` };
+  const headers: ComputedRef<{ Authorization: string }> = computed(() => {
+    return { Authorization: `Bearer ${token.value}` };
+  });
 
   const setToken = (newToken: string | null) => {
     if (newToken) {
@@ -53,7 +55,9 @@ export const useAuthStore = defineStore("auth", () => {
 
   const getUserInfo = async (): Promise<AxiosResponse<any, any> | null> => {
     try {
-      const response = await axios.get(`${BASE_URL}/user`, { headers });
+      const response = await axios.get(`${BASE_URL}/user`, {
+        headers: headers.value,
+      });
       return response;
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {

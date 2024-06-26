@@ -1,20 +1,24 @@
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import type { UserInfo, UserLinks } from "@/types";
+import type { GetUserLinksResponse, UserInfo } from "@/types";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const useProfileStore = defineStore("profile", () => {
   const authStore = useAuthStore();
-  const headers = { Authorization: `Bearer ${authStore.token}` };
+  const headers: ComputedRef<{ Authorization: string }> = computed(() => {
+    return { Authorization: `Bearer ${authStore.token}` };
+  });
   const profile: Ref<UserInfo | null> = ref(null);
-  const links: Ref<UserLinks[] | null> = ref(null);
+  const links: Ref<GetUserLinksResponse | null> = ref(null);
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/user`, { headers });
+      const response = await axios.get(`${BASE_URL}/user`, {
+        headers: headers.value,
+      });
 
       profile.value = response.data;
     } catch (e: any) {
@@ -26,7 +30,7 @@ export const useProfileStore = defineStore("profile", () => {
     try {
       const response = await axios.get(
         `${BASE_URL}/links/${profile.value?.id}`,
-        { headers },
+        { headers: headers.value },
       );
 
       links.value = response.data;
