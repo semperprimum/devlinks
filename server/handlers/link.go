@@ -16,6 +16,7 @@ type AddLinkRequest struct {
 	UserID   int    `json:"user_id"`
 	URL      string `json:"url" validate:"required"`
 	Platform string `json:"platform" validate:"required"`
+	TempID   string `json:"temp_id"`
 }
 
 type UpdateOrderRequest struct {
@@ -29,7 +30,8 @@ type DeleteLinkRequest struct {
 }
 
 type AddLinkResponse struct {
-	ID int `json:"id"`
+	ID     int    `json:"id"`
+	TempID string `json:"temp_id,omitempty"`
 }
 
 type UserInfo struct {
@@ -115,7 +117,8 @@ func AddLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := AddLinkResponse{
-		ID: linkID,
+		ID:     linkID,
+		TempID: req.TempID,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
