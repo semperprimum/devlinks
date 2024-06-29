@@ -24,6 +24,16 @@ type UpdateOrderRequest struct {
 	LinkIDs []int `json:"link_ids" validate:"dive,number"`
 }
 
+type UpdateLinkRequest struct {
+	UserID   int    `json:"user_id"`
+	URL      string `json:"url" validate:"required"`
+	Platform string `json:"platform" validate:"required"`
+}
+
+type UpdateLinkResponse struct {
+	LinkID int `json:"link_id"`
+}
+
 type DeleteLinkRequest struct {
 	UserID int `json:"user_id"`
 	LinkID int `json:"link_id"`
@@ -123,6 +133,55 @@ func AddLink(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(res)
+}
+
+func UpdateLink(w http.ResponseWriter, r *http.Request) {
+	var req UpdateLinkRequest
+	linkID, err := strconv.Atoi(r.PathValue("id"))
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.WriteJSONError(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if validationErrors := utils.ValidateStruct(req); validationErrors != nil {
+		utils.WriteValidationError(w, validationErrors)
+		return
+	}
+
+	if userId, err := strconv.Atoi(middleware.GetUser(r)); err != nil {
+		utils.WriteJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		req.UserID = userId
+	}
+
+	tx, err := db.DB.Begin()
+	if err != nil {
+		utils.WriteJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	_, err = tx.Exec("UPDATE links SET platform = $1, url = $2 WHERE id = $3 AND user_id = $4", req.Platform, req.URL, linkID, req.UserID)
+	if err != nil {
+		utils.WriteJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res := UpdateLinkResponse{
+		LinkID: linkID,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
 

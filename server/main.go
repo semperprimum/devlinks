@@ -34,6 +34,7 @@ func main() {
 	authRouter.HandleFunc("PUT /user/link", handlers.UpdateLinksOrder)
 	authRouter.HandleFunc("DELETE /user/link/{id}", handlers.DeleteLink)
 	authRouter.HandleFunc("POST /user/upload", handlers.UploadPicture)
+	authRouter.HandleFunc("PUT /user/link/{id}", handlers.UpdateLink)
 
 	router.Handle("/", middleware.Auth(authRouter))
 	corsHandler := cors.New(cors.Options{
