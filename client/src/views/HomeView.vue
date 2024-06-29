@@ -6,8 +6,12 @@ import NoLinksGetStarted from "@/components/NoLinksGetStarted.vue";
 import LinkCard from "@/components/LinkCard.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useProfileStore } from "@/stores/profile";
-import { onMounted, ref, watch, type Ref } from "vue";
-import { useSortable } from "@vueuse/integrations/useSortable";
+import { computed, nextTick, onMounted, ref, watch, type Ref } from "vue";
+import {
+  moveArrayElement,
+  useSortable,
+  type UseSortableOptions,
+} from "@vueuse/integrations/useSortable";
 
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
@@ -18,9 +22,23 @@ const initializeSortable = () => {
     useSortable(list, profileStore.links.links, {
       animation: 300,
       handle: ".handle",
+      onUpdate: (e: UseSortableOptions) => {
+        moveArrayElement(profileStore.links!.links, e.oldIndex, e.newIndex);
+
+        nextTick(() => {
+          profileStore.changesMade = true;
+        });
+      },
     });
   }
 };
+
+const linksWithKeys = computed(() => {
+  return profileStore.links?.links.map((link) => ({
+    ...link,
+    key: link.id ? `id-${link.id}` : `temp_id-${link.temp_id}`,
+  }));
+});
 
 onMounted(async () => {
   if (authStore.token) {
@@ -53,7 +71,7 @@ watch(
         <Phone />
       </div>
       <div
-        class="relative overflow-auto bg-neutral-100 rounded-3xl flex-1 p-6 pb-0 md:p-10 md:pb-0"
+        class="relative flex flex-col overflow-auto bg-neutral-100 rounded-3xl flex-1 p-6 pb-0 md:p-10 md:pb-0"
       >
         <h1 class="text-2xl font-bold text-neutral-500 md:text-[2rem]">
           Customize your links
@@ -71,18 +89,19 @@ watch(
 
           <section ref="list" class="grid gap-6" v-else>
             <LinkCard
-              :key="link.id"
+              :key="link.key"
               :link="link"
               :index="index"
-              v-for="(link, index) in profileStore.links?.links"
+              v-for="(link, index) in linksWithKeys"
             />
           </section>
         </div>
 
         <div
-          class="sticky bottom-0 left-0 w-full py-4 bg-neutral-100 border-t border-neutral-300 md:py-6 md:flex"
+          class="sticky mt-auto bottom-0 left-0 w-full py-4 bg-neutral-100 border-t border-neutral-300 md:py-6 md:flex"
         >
           <Button
+            @click="profileStore.saveLinks"
             :disabled="!profileStore.changesMade"
             class="w-full md:w-auto md:ml-auto"
             >Save</Button

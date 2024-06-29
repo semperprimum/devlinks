@@ -9,13 +9,7 @@ import {
   type Ref,
 } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import type {
-  Buffer,
-  GetUserLinksResponse,
-  SelectOption,
-  UserInfo,
-  UserLink,
-} from "@/types";
+import type { Buffer, GetUserLinksResponse, UserInfo, UserLink } from "@/types";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -32,6 +26,7 @@ export const useProfileStore = defineStore("profile", () => {
     updated: [],
   });
   const changesMade: Ref<boolean> = ref(false);
+  const profileChangesMade: Ref<boolean> = ref(false);
 
   const getUserInfo = async () => {
     try {
@@ -127,6 +122,127 @@ export const useProfileStore = defineStore("profile", () => {
     }
   };
 
+  const updateFirstName = (value: string) => {
+    if (!profile.value) return;
+
+    profile.value.first_name.String = value;
+
+    if (profile.value.first_name.String !== "") {
+      profile.value.first_name.Valid = true;
+    } else {
+      profile.value.first_name.Valid = false;
+    }
+    profileChangesMade.value = true;
+  };
+
+  const updateLastName = (value: string) => {
+    if (!profile.value) return;
+
+    profile.value.last_name.String = value;
+
+    if (profile.value.last_name.String !== "") {
+      profile.value.last_name.Valid = true;
+    } else {
+      profile.value.last_name.Valid = false;
+    }
+    profileChangesMade.value = true;
+  };
+
+  const updateDispalyEmail = (value: string) => {
+    if (!profile.value) return;
+
+    profile.value.display_email.String = value;
+
+    if (profile.value.display_email.String !== "") {
+      profile.value.display_email.Valid = true;
+    } else {
+      profile.value.display_email.Valid = false;
+    }
+    profileChangesMade.value = true;
+  };
+
+  const saveLinks = async () => {
+    if (!buffer.added && !buffer.deleted && !buffer.updated) return;
+
+    // Add New Links
+    if (buffer.added.length !== 0) {
+      for (const id of buffer.added) {
+        const link = links.value?.links.find((l) => l.temp_id === id);
+        if (!link) continue;
+
+        try {
+          const response = await axios.post(
+            `${BASE_URL}/user/link`,
+            {
+              platform: link.platform,
+              url: link.url,
+              temp_id: link.temp_id,
+            },
+            { headers: headers.value },
+          );
+
+          link.temp_id = undefined;
+          link.id = response.data.id;
+        } catch (e: any) {
+          console.error(e.response?.data?.message || e.message);
+        }
+      }
+    }
+
+    // Update Links
+    if (buffer.updated.length !== 0) {
+      for (const id of buffer.updated) {
+        const link = links.value?.links.find((l) => l.id === id);
+        if (!link) continue;
+
+        try {
+          await axios.put(
+            `${BASE_URL}/user/link/${id}`,
+            {
+              url: link.url,
+              platform: link.platform,
+            },
+            { headers: headers.value },
+          );
+        } catch (e: any) {
+          console.error(e.response?.data?.message || e.message);
+        }
+      }
+    }
+
+    // Delete Links
+    if (buffer.deleted.length !== 0) {
+      for (const id of buffer.deleted) {
+        try {
+          await axios.delete(`${BASE_URL}/user/link/${id}`, {
+            headers: headers.value,
+          });
+        } catch (e: any) {
+          console.error(e.response?.data?.message || e.message);
+        }
+      }
+    }
+
+    // Update Links Order
+    const link_ids = links.value?.links.map((link) => link.id);
+    try {
+      await axios.put(
+        `${BASE_URL}/user/link`,
+        {
+          link_ids,
+        },
+        { headers: headers.value },
+      );
+    } catch (e: any) {
+      console.error(e.response?.data?.message || e.message);
+    }
+
+    buffer.updated = [];
+    buffer.deleted = [];
+    buffer.added = [];
+    changesMade.value = false;
+  };
+
   const $reset = () => {
     profile.value = null;
     links.value = null;
@@ -143,6 +259,10 @@ export const useProfileStore = defineStore("profile", () => {
     updateUrl,
     removeLink,
     addLink,
+    updateFirstName,
+    updateDispalyEmail,
+    updateLastName,
+    saveLinks,
     buffer,
     changesMade,
     profile,
