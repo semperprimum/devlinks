@@ -41,7 +41,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileName := fmt.Sprintf("user_%s_%s", userID, handler.Filename)
+	fileName := fmt.Sprintf("user_%s", userID)
 	filePath := filepath.Join("uploads", fileName)
 	dst, err := os.Create(filePath)
 	if err != nil {
