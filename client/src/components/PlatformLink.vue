@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { getPlatformProperties } from "@/utils/platform";
 import ArrowRight from "@/components/icons/ArrowRight.vue";
+import { computed } from "vue";
 
 const props = defineProps<{
   platform: string;
   link: string;
 }>();
 
-const platformProperties = getPlatformProperties(props.platform);
+const platformProperties = computed(() =>
+  getPlatformProperties(props.platform),
+);
 </script>
 
 <template>
   <a
     :href="link"
     :style="{ '--clr': platformProperties.color }"
-    class="w-full h-11 rounded-lg text-neutral-100 py-3 px-4 flex items-center gap-2"
+    class="w-full rounded-lg h-11 text-neutral-100 py-3 px-4 flex items-center gap-2"
     :class="{
       'bg-[--clr]': true,
       ['text-neutral-500']: platform === 'frontendmentor',
@@ -29,7 +32,7 @@ const platformProperties = getPlatformProperties(props.platform);
       }"
       :is="platformProperties.icon"
     />
-    <span class="flex-1">{{ platformProperties.name }}</span>
+    <span class="flex-1 text-xs">{{ platformProperties.name }}</span>
     <component
       :class="{
         ['fill-neutral-500']: platform === 'frontendmentor',

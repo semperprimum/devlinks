@@ -11,7 +11,7 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="pt-6"></div>
+  <div class="hidden md:pt-6 md:block"></div>
   <header
     class="flex justify-between items-center bg-neutral-100 p-4 pl-6 md:m-6 md:mt-0 md:rounded-2xl"
   >

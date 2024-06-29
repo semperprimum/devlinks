@@ -8,11 +8,12 @@ export interface UserInfo {
   last_name: SqlStringOrNull;
   pic_path: SqlStringOrNull;
 }
-export interface UserLinks {
-  id: number;
+export interface UserLink {
+  id?: number;
   url: string;
   platform: string;
-  order_index: number;
+  order_index?: number;
+  temp_id?: string;
 }
 
 export interface GetUserLinksResponse {
@@ -23,7 +24,7 @@ export interface GetUserLinksResponse {
     last_name: SqlStringOrNull;
     pic_path: SqlStringOrNull;
   };
-  links: UserLinks[];
+  links: UserLink[];
 }
 
 type SqlStringOrNull = {
@@ -31,8 +32,14 @@ type SqlStringOrNull = {
   Valid: boolean;
 };
 
+export interface Buffer {
+  added: string[];
+  deleted: number[];
+  updated: number[];
+}
+
 export interface SelectOption {
-  value: string | number;
+  value: string;
   label: string;
   icon?: Component;
 }

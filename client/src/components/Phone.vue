@@ -17,9 +17,6 @@ const filler = computed(() => {
     }
   }
 
-  console.log(links.value?.length);
-  console.log(f);
-
   return f;
 });
 </script>

@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <button
-    class="font-semibold py-3 px-6 rounded-lg"
+    class="font-semibold py-3 px-6 rounded-lg disabled:opacity-25 disabled:cursor-not-allowed"
     :class="{
       ['bg-brand-300 text-neutral-100']: !secondary,
       ['bg-transparent outline outline-1 outline-brand-300 text-brand-300']:

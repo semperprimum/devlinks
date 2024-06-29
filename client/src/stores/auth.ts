@@ -1,10 +1,12 @@
 import axios, { type AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { useProfileStore } from "./profile";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const useAuthStore = defineStore("auth", () => {
+  const profileStore = useProfileStore();
   const token: Ref<string | null> = ref(
     localStorage.getItem("auth-token") || null,
   );
@@ -90,6 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = () => {
     setToken(null);
+    profileStore.$reset();
   };
 
   return { token, isLoading, login, logout, register, getUserInfo, checkAuth };
