@@ -19,11 +19,11 @@ interface FormData {
 }
 
 const validationSchema = yup.object({
-  email: yup.string().email("Must be a valid Email").required("Can't be empty"),
+  email: yup.string().email("Please check again").required("Can't be empty"),
   password: yup
     .string()
-    .min(8, "Please check again")
-    .required("Can't be empty"),
+    .required("Can't be empty")
+    .min(8, "Please check again"),
 });
 
 const { defineField, handleSubmit, errors } = useForm<FormData>({
@@ -56,26 +56,26 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
 
         <form @submit.prevent="onSubmit">
-          <Label text="Email address" />
+          <Label :error="errors.email" text="Email address" />
           <Input
             v-model="email"
             class="mb-6 mt-1"
+            :error="errors.email"
             placeholder="e.g. alex@email.com"
             :leading="Envelope"
           />
 
-          <Label text="Password" />
+          <Label :error="errors.password" text="Password" />
           <Input
             v-model="password"
             type="password"
             class="mt-1"
+            :error="errors.password"
             placeholder="Enter your password"
             :leading="Lock"
           />
 
           <Button class="w-full mt-6">Login</Button>
-
-          <code>{{ errors }}</code>
         </form>
 
         <p class="text-neutral-400 w-full text-center mt-6">

@@ -23,8 +23,8 @@ const validationSchema = yup.object({
   email: yup.string().email("Must be a valid Email").required("Can't be empty"),
   password: yup
     .string()
-    .min(8, "Please check again")
-    .required("Can't be empty"),
+    .required("Can't be empty")
+    .min(8, "Please check again"),
   confirmPassword: yup
     .string()
     .required("Can't be empty")
@@ -62,26 +62,29 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
 
         <form @submit.prevent="onSubmit">
-          <Label text="Email address" />
+          <Label :error="errors.email" text="Email address" />
           <Input
             v-model="email"
+            :error="errors.email"
             class="mb-6 mt-1"
             placeholder="e.g. alex@email.com"
             :leading="Envelope"
           />
 
-          <Label text="Create password" />
+          <Label :error="errors.password" text="Create password" />
           <Input
             v-model="password"
+            :error="errors.password"
             type="password"
             class="mt-1 mb-6"
             placeholder="At least .8 characters"
             :leading="Lock"
           />
 
-          <Label text="Confirm password" />
+          <Label :error="errors.confirmPassword" text="Confirm password" />
           <Input
             v-model="confirmPassword"
+            :error="errors.confirmPassword"
             type="password"
             class="mt-1"
             placeholder="At least .8 characters"
@@ -93,9 +96,6 @@ const onSubmit = handleSubmit(async (values) => {
           </p>
 
           <Button class="w-full mt-6">Register</Button>
-          <code>
-            {{ errors }}
-          </code>
         </form>
 
         <p class="text-neutral-400 w-full text-center mt-6">
