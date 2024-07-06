@@ -161,6 +161,21 @@ export const useProfileStore = defineStore("profile", () => {
     profileChangesMade.value = true;
   };
 
+  const savePicture = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      await axios.post(`${BASE_URL}/user/upload`, formData, {
+        headers: { ...headers.value, "Content-Type": "multipart/form-data" },
+      });
+      if (profile.value?.pic_path) {
+        profile.value.pic_path.Valid = true;
+      }
+    } catch (e: any) {
+      console.error(e.response?.data?.message || e.message);
+    }
+  };
+
   const saveLinks = async () => {
     if (!buffer.added && !buffer.deleted && !buffer.updated) return;
 
@@ -243,6 +258,28 @@ export const useProfileStore = defineStore("profile", () => {
     changesMade.value = false;
   };
 
+  const saveProfile = async (
+    firstName: string,
+    lastName: string,
+    email?: string,
+  ) => {
+    try {
+      axios.put(
+        `${BASE_URL}/user/update`,
+        {
+          first_name: firstName,
+          last_name: lastName,
+          display_email: email || undefined,
+        },
+        { headers: headers.value },
+      );
+
+      profileChangesMade.value = false;
+    } catch (e: any) {
+      console.error(e.response?.data?.message || e.message);
+    }
+  };
+
   const $reset = () => {
     profile.value = null;
     links.value = null;
@@ -262,9 +299,12 @@ export const useProfileStore = defineStore("profile", () => {
     updateFirstName,
     updateDispalyEmail,
     updateLastName,
+    savePicture,
     saveLinks,
+    saveProfile,
     buffer,
     changesMade,
+    profileChangesMade,
     profile,
     links,
     $reset,

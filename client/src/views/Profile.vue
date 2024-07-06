@@ -2,15 +2,70 @@
 import Header from "@/components/Header.vue";
 import Button from "@/components/Button.vue";
 import Input from "@/components/Input.vue";
-import Image from "@/components/icons/Image.vue";
+import PictureInput from "@/components/PictureInput.vue";
 import Phone from "@/components/Phone.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { useProfileStore } from "@/stores/profile";
+import * as yup from "yup";
+import { useForm } from "vee-validate";
+import { watch } from "vue";
 
 const authStore = useAuthStore();
 const router = useRouter();
 const profileStore = useProfileStore();
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  displayEmail: string;
+}
+
+const validationSchema = yup.object({
+  firstName: yup.string().required("Can't be empty"),
+  lastName: yup.string().required("Can't be empty"),
+  displayEmail: yup.string().email("Please check again"),
+});
+
+const { defineField, handleSubmit, errors } = useForm<FormData>({
+  validationSchema,
+  initialValues: {
+    firstName: profileStore.profile?.first_name.Valid
+      ? profileStore.profile.first_name.String
+      : "",
+    lastName: profileStore.profile?.last_name.Valid
+      ? profileStore.profile.last_name.String
+      : "",
+    displayEmail: profileStore.profile?.display_email.Valid
+      ? profileStore.profile.display_email.String
+      : "",
+  },
+});
+
+const [firstName] = defineField("firstName");
+const [lastName] = defineField("lastName");
+const [displayEmail] = defineField("displayEmail");
+
+const onSubmit = handleSubmit(async (values) => {
+  await profileStore.saveProfile(
+    values.firstName,
+    values.lastName,
+    values.displayEmail,
+  );
+});
+
+watch(
+  () => firstName.value,
+  (newValue) => profileStore.updateFirstName(newValue),
+);
+watch(
+  () => lastName.value,
+  (newValue) => profileStore.updateLastName(newValue),
+);
+watch(
+  () => displayEmail.value,
+  (newValue) => profileStore.updateDispalyEmail(newValue),
+);
 
 const handleLogout = () => {
   authStore.logout();
@@ -47,23 +102,7 @@ const handleLogout = () => {
             Profile pictre
           </h3>
 
-          <div>
-            <label
-              for="file-input"
-              class="cursor-pointer bg-brand-100 rounded-xl w-48 aspect-square grid place-items-center"
-            >
-              <span class="text-brand-300 font-semibold">
-                <Image class="mb-2 mx-auto fill-brand-300" />
-                + Upload Image
-              </span>
-            </label>
-            <input
-              id="file-input"
-              class="hidden"
-              type="file"
-              accept="image/png, image/jpeg"
-            />
-          </div>
+          <PictureInput />
 
           <p class="mt-6 text-xs text-neutral-400 md:m-0">
             Image must be below 1024x1024px. Use PNG or JPG format.
@@ -77,43 +116,54 @@ const handleLogout = () => {
               for="first_name"
               >First name*</label
             >
-            <Input class="md:flex-1" id="first_name" placeholder="Your name" />
+            <Input
+              v-model="firstName"
+              :error="errors.firstName"
+              class="md:flex-1"
+              id="first_name"
+              placeholder="Your name"
+            />
           </div>
           <div class="md:flex md:gap-4 md:items-center">
             <label
               class="block text-xs mb-1 w-60 md:text-neutral-400 md:text-base md:m-0"
-              for="first_name"
+              for="last_name"
               >Last Name*</label
             >
             <Input
+              v-model="lastName"
+              :error="errors.lastName"
               class="md:flex-1"
-              id="first_name"
+              id="last_name"
               placeholder="Your last name"
             />
           </div>
           <div class="md:flex md:gap-4 md:items-center">
             <label
               class="block text-xs mb-1 w-60 md:text-neutral-400 md:text-base md:m-0"
-              for="first_name"
+              for="email"
               >Email</label
             >
             <Input
+              v-model="displayEmail"
+              :error="errors.displayEmail"
               class="md:flex-1"
-              id="first_name"
+              id="email"
               placeholder="e.g. email@example.com"
             />
           </div>
         </section>
 
-        <Button class="self-start mb-6" secondary @click="handleLogout"
-          >Logout</Button
+        <Button class="self-start mb-6" danger @click="handleLogout"
+          >Log out</Button
         >
 
         <div
           class="sticky mt-auto bottom-0 left-0 w-full py-4 bg-neutral-100 border-t border-neutral-300 md:py-6 md:flex"
         >
           <Button
-            :disabled="!profileStore.changesMade"
+            @click="onSubmit"
+            :disabled="!profileStore.profileChangesMade"
             class="w-full md:w-auto md:ml-auto"
             >Save</Button
           >

@@ -19,6 +19,10 @@ const filler = computed(() => {
 
   return f;
 });
+
+const prefix = computed(() =>
+  profileStore.profile?.pic_path.String.startsWith("data") ? "" : BASE_URL,
+);
 </script>
 
 <template>
@@ -29,7 +33,7 @@ const filler = computed(() => {
       <img
         v-if="profileStore.profile?.pic_path.Valid"
         class="w-24 aspect-square mx-auto rounded-full object-cover border-4 border-brand-300"
-        :src="BASE_URL + profileStore.profile?.pic_path.String"
+        :src="prefix + profileStore.profile?.pic_path.String"
         alt=""
       />
       <div

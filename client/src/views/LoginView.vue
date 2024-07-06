@@ -75,7 +75,7 @@ const onSubmit = handleSubmit(async (values) => {
             :leading="Lock"
           />
 
-          <Button class="w-full mt-6">Login</Button>
+          <Button class="w-full mt-6">Log in</Button>
         </form>
 
         <p class="text-neutral-400 w-full text-center mt-6">
