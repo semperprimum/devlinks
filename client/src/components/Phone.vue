@@ -76,7 +76,7 @@ const prefix = computed(() =>
         :link="link.url"
       />
       <div
-        v-for="fill in filler"
+        v-for="_ in filler"
         class="w-full h-11 bg-neutral-250 rounded-lg"
       ></div>
     </div>

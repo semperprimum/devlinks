@@ -35,7 +35,7 @@ const route = useRoute();
     </div>
     <div class="justify-self-end">
       <RouterLink
-        to="/"
+        to="/preview"
         class="block px-4 py-3 outline outline-1 outline-brand-300 rounded-lg md:px-7"
       >
         <span class="hidden md:block text-brand-300 font-semibold"
