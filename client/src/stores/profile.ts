@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from "@/stores/auth";
 import type { Buffer, GetUserLinksResponse, UserInfo, UserLink } from "@/types";
 import { useToast } from "@/services/ToastService";
+import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -76,7 +77,7 @@ export const useProfileStore = defineStore("profile", () => {
 
   const addLink = () => {
     const newLink: UserLink = {
-      temp_id: crypto.randomUUID(),
+      temp_id: uuidv4(),
       platform: "github",
       url: "",
     };
