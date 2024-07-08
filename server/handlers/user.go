@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gofor-little/env"
 	"github.com/golang-jwt/jwt"
 	"github.com/semperprimum/devlinks/server/db"
 	"github.com/semperprimum/devlinks/server/middleware"
@@ -55,6 +56,7 @@ type UpdateUserInfoData struct {
 	DisplayEmail string `json:"display_email,omitempty" validate:"omitempty,email"`
 	FirstName    string `json:"first_name,omitempty" validate:"omitempty"`
 	LastName     string `json:"last_name,omitempty" validate:"omitempty"`
+	Link         string `json:"link,omitempty" validate:"omitempty"`
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -217,11 +219,24 @@ func UpdateUserInfo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if data.Link != "" {
+		_, err = db.DB.Exec("UPDATE users SET link = $1 WHERE id = $2", data.Link, userID)
+		if err != nil {
+			utils.WriteJSONError(w, "Failed updating link field", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
 
 func GenerateJWT(userID string) (string, error) {
+	secret, err := env.MustGet("JWT_SECRET")
+	if err != nil {
+		panic(err)
+	}
+
 	// Set token expiration time
 	expirationTime := time.Now().Add(120 * time.Hour)
 
@@ -235,7 +250,7 @@ func GenerateJWT(userID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign the token with the secret key
-	tokenString, err := token.SignedString([]byte("1234"))
+	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return "", err
 	}

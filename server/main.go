@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gofor-little/env"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rs/cors"
 	"github.com/semperprimum/devlinks/server/db"
@@ -12,6 +13,10 @@ import (
 )
 
 func main() {
+	if err := env.Load(".env"); err != nil {
+		panic(err)
+	}
+
 	db.InitDB()
 
 	db.CreateDB()

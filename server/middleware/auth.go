@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gofor-little/env"
 	"github.com/golang-jwt/jwt"
 	"github.com/semperprimum/devlinks/server/models"
 	"github.com/semperprimum/devlinks/server/utils"
@@ -16,17 +17,18 @@ type wrappedRequest struct {
 	user models.User
 }
 
-// Define a key type to use in the context
 type key int
 
 const (
-	// UserIDKey is the key for the user ID in the context
 	UserIDKey key = iota
 )
 
-var SecretKey = []byte("1234")
-
 func Auth(next http.Handler) http.Handler {
+	secret, err := env.MustGet("JWT_SECRET")
+	if err != nil {
+		panic(err)
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the token from the Authorization header
 		authHeader := r.Header.Get("Authorization")
@@ -50,7 +52,7 @@ func Auth(next http.Handler) http.Handler {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte(SecretKey), nil
+			return []byte(secret), nil
 		})
 
 		if err != nil {
