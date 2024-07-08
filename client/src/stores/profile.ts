@@ -10,6 +10,7 @@ import {
 } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import type { Buffer, GetUserLinksResponse, UserInfo, UserLink } from "@/types";
+import { useToast } from "@/services/ToastService";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,6 +28,7 @@ export const useProfileStore = defineStore("profile", () => {
   });
   const changesMade: Ref<boolean> = ref(false);
   const profileChangesMade: Ref<boolean> = ref(false);
+  const { showToast } = useToast();
 
   const getUserInfo = async () => {
     try {
@@ -256,6 +258,7 @@ export const useProfileStore = defineStore("profile", () => {
     buffer.deleted = [];
     buffer.added = [];
     changesMade.value = false;
+    showToast("Your changes have been successfully saved!", "save");
   };
 
   const saveProfile = async (
@@ -275,6 +278,7 @@ export const useProfileStore = defineStore("profile", () => {
       );
 
       profileChangesMade.value = false;
+      showToast("Your changes have been successfully saved!", "save");
     } catch (e: any) {
       console.error(e.response?.data?.message || e.message);
     }

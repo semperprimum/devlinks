@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Button from "@/components/Button.vue";
 import PlatformLink from "@/components/PlatformLink.vue";
+import { useToast } from "@/services/ToastService";
 import { useProfileStore } from "@/stores/profile";
+import { useClipboard } from "@vueuse/core";
 import { computed } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -11,6 +13,14 @@ const profileStore = useProfileStore();
 const prefix = computed(() =>
   profileStore.profile?.pic_path.String.startsWith("data") ? "" : BASE_URL,
 );
+
+const { copy } = useClipboard();
+const { showToast } = useToast();
+
+const copyLink = () => {
+  copy(`http://localhost:5173/${profileStore.profile?.id}`);
+  showToast("The link has been copied to your clipboard!", "copy");
+};
 </script>
 
 <template>
@@ -26,7 +36,9 @@ const prefix = computed(() =>
         >Back to Editor</Button
       ></RouterLink
     >
-    <Button class="max-md:flex-1 min-w-fit">Share Link</Button>
+    <Button @click="copyLink" class="max-md:flex-1 min-w-fit"
+      >Share Link</Button
+    >
   </header>
 
   <section
