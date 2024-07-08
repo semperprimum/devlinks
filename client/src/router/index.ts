@@ -28,15 +28,27 @@ const router = createRouter({
       name: "preview",
       component: () => import("@/views/Preview.vue"),
     },
+    {
+      path: "/:id",
+      name: "link",
+      component: () => import("@/views/LinkView.vue"),
+    },
+    {
+      path: "/notfound",
+      name: "404",
+      component: () => import("@/views/404.vue"),
+    },
   ],
 });
 
-router.beforeEach(async (to, _) => {
+router.beforeEach((to, _) => {
   if (
     !localStorage.getItem("auth-token") &&
+    to.name !== "link" &&
     to.name !== "login" &&
     to.name !== "register"
   ) {
+    console.log("Redirect to login");
     return { name: "login" };
   }
 
