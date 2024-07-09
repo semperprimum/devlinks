@@ -23,6 +23,7 @@ export default {
         500: "#333333",
       },
       red: "#FF3939",
+      success: "#22c55e",
     },
     fontFamily: {
       sans: ["Instrument Sans Variable", "sans-serif"],

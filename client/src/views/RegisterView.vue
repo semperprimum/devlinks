@@ -42,7 +42,7 @@ const [confirmPassword] = defineField("confirmPassword");
 const onSubmit = handleSubmit(async (values) => {
   await authStore.register(values.email, values.password);
 
-  router.replace("/login");
+  // router.replace("/login");
 });
 </script>
 
