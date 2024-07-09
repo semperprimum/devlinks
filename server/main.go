@@ -50,10 +50,10 @@ func main() {
 	}).Handler(router)
 
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    ":3000",
 		Handler: middleware.Logging(corsHandler),
 	}
 
-	log.Println("Starting server on port 8080")
+	log.Println("Starting server on port 3000")
 	server.ListenAndServe()
 }
