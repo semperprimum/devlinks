@@ -18,7 +18,7 @@ const { copy } = useClipboard();
 const { showToast } = useToast();
 
 const copyLink = () => {
-  copy(`http://localhost:5173/${profileStore.profile?.id}`);
+  copy(`https://devlinks.thekim.ca/${profileStore.profile?.id}`);
   showToast("The link has been copied to your clipboard!", "copy");
 };
 </script>
