@@ -7,6 +7,8 @@ import LogoSmall from "@/components/icons/LogoSmall.vue";
 import LogoFull from "@/components/icons/LogoFull.vue";
 import Spinner from "@/components/icons/Spinner.vue";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const linkStore = useLinkStore();
 const route = useRoute();
 const router = useRouter();
@@ -45,7 +47,7 @@ onBeforeUnmount(() => {
   >
     <img
       class="w-[6.5rem] aspect-square mx-auto rounded-full object-cover border-4 border-brand-300"
-      :src="'http://localhost:8080/' + linkStore.data?.user.pic_path.String"
+      :src="BASE_URL + linkStore.data?.user.pic_path.String"
       alt=""
     />
     <h2 class="text-3xl font-bold text-center mt-6">
