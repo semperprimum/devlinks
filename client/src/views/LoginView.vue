@@ -41,7 +41,7 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div
+  <main
     class="p-8 md:min-h-screen md:grid md:place-items-center md:grid-flow-row-dense"
   >
     <div>
@@ -86,5 +86,5 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
       </div>
     </div>
-  </div>
+  </main>
 </template>

@@ -41,7 +41,7 @@ const copyLink = () => {
     >
   </header>
 
-  <section
+  <main
     class="mt-16 md:bg-neutral-100 md:px-14 md:py-12 md:rounded-[1.5rem] md:mx-auto md:max-w-[22rem] md:mt-28 md:shadow-dropdownShadow"
   >
     <img
@@ -69,5 +69,5 @@ const copyLink = () => {
         :link="link.url"
       />
     </section>
-  </section>
+  </main>
 </template>

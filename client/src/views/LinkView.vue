@@ -41,7 +41,7 @@ onBeforeUnmount(() => {
     </RouterLink>
   </header>
 
-  <section
+  <main
     v-if="!linkStore.isLoading"
     class="mt-16 md:bg-neutral-100 md:px-14 md:py-12 md:rounded-[1.5rem] md:mx-auto md:max-w-[22rem] md:mt-28 md:shadow-dropdownShadow"
   >
@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
         :link="link.url"
       />
     </section>
-  </section>
+  </main>
 
   <Spinner v-else class="mx-auto w-24 fill-brand-300 animate-spin mt-96" />
 </template>

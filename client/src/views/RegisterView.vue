@@ -5,13 +5,12 @@ import Lock from "@/components/icons/Lock.vue";
 import LogoFull from "@/components/icons/LogoFull.vue";
 import Label from "@/components/Label.vue";
 import Button from "@/components/Button.vue";
-import { RouterLink, useRouter } from "vue-router";
+import { RouterLink } from "vue-router";
 import * as yup from "yup";
 import { useForm } from "vee-validate";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
-const router = useRouter();
 
 interface FormData {
   email: string;
@@ -41,13 +40,11 @@ const [confirmPassword] = defineField("confirmPassword");
 
 const onSubmit = handleSubmit(async (values) => {
   await authStore.register(values.email, values.password);
-
-  // router.replace("/login");
 });
 </script>
 
 <template>
-  <div
+  <main
     class="p-8 md:min-h-screen md:grid md:place-items-center md:grid-flow-row-dense"
   >
     <div>
@@ -106,5 +103,5 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
       </div>
     </div>
-  </div>
+  </main>
 </template>
